@@ -85,7 +85,7 @@ Dentro de VIM:
 👑 Verificación
 whoami
 
-![Root](accesoroot)
+![Root](accesoroot.png)
 
 Resultado:
 

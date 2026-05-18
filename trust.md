@@ -87,7 +87,7 @@ whoami
 
 ![Root](accesoroot.png)
 
-![Prueba](IP.png)
+![Prueba](<IP.png>)
 
 Resultado:
 

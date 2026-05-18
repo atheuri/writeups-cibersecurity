@@ -13,7 +13,7 @@ Se realiza un escaneo completo de puertos con Nmap:
 
 ```bash
 nmap -p- -sC -sV --open -sS -n -Pn <IP>
-![Escaneo Nmap](ESCANEO NMAP.png)
+![Escaneo Nmap](nmap.png)
 
 Parámetros utilizados:
 -p-: escaneo de todos los puertos
@@ -32,7 +32,7 @@ Al detectar el puerto HTTP abierto, se realiza fuzzing con Gobuster:
 
 gobuster dir -u http://<IP> -w /usr/share/wordlists/dirb/common.txt
 
-![Gobuster](ESCANEO GOBUSTER.png)
+![Gobuster](gobuster.png)
 
 📌 Resultados
 
@@ -48,7 +48,7 @@ Se realiza ataque de fuerza bruta con Hydra:
 
 hydra -l mario -P /usr/share/wordlists/rockyou.txt ssh://<IP>
 
-![Hydra](escaneo hydra.png)
+![Hydra](hydra.png)
 
 📌 Resultado
 Usuario: mario
@@ -58,7 +58,7 @@ Acceso vía SSH:
 
 ssh mario@<IP>
 
-![Dentro de SSH](dentro ssh.png)
+![Dentro de SSH](dentrossh.png)
 
 🚀 Escalada de Privilegios
 

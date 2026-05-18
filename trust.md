@@ -87,6 +87,8 @@ whoami
 
 ![Root](accesoroot.png)
 
+![Prueba](IP.png)
+
 Resultado:
 
 root

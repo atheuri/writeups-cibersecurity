@@ -66,7 +66,7 @@ Verificación de permisos:
 
 sudo -l
 
-![Sudo permisos](sudo -l.png)
+![Sudo permisos](<sudo -l.png>)
 
 Resultado:
 

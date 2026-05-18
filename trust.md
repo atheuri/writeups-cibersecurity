@@ -85,7 +85,7 @@ Dentro de VIM:
 👑 Verificación
 whoami
 
-![Root](https://github.com/atheuri/writeups-cibersecurity/blob/main/ACCESO%20ROOT%20LOGRADO.png)
+![Root](https://raw.githubusercontent.com/atheuri/writeups-cibersecurity/main/ACCESO%20ROOT%20LOGRADO.png)
 
 Resultado:
 

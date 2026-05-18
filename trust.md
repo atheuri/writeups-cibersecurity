@@ -11,7 +11,7 @@ Se descomprime el archivo `Trust.zip` y se ejecuta la máquina virtual.
 
 Se realiza un escaneo completo de puertos con Nmap:
 
-```bash
+
 nmap -p- -sC -sV --open -sS -n -Pn <IP>
 ![Escaneo Nmap](nmap.png)
 
@@ -77,7 +77,7 @@ Se ejecuta:
 
 sudo vim
 
-![VIM](editor texto vim.png)
+![VIM](editortextovim.png)
 
 Dentro de VIM:
 
@@ -86,8 +86,6 @@ Dentro de VIM:
 whoami
 
 ![Root](accesoroot.png)
-
-![Prueba](<IP.png>)
 
 Resultado:
 

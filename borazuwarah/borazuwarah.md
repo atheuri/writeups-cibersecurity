@@ -9,7 +9,7 @@
 
 Se descomprime el archivo `borazuwarahcft.zip` y se ejecuta la máquina virtual.
 
-![MAQUINA](images/DENTRO.png)
+![MAQUINA](Images/DENTRO.png)
 
 Se realiza un escaneo completo de puertos con Nmap:
 

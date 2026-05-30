@@ -1,0 +1,63 @@
+🛡️ Write-Up: borazuwarahcft.zip
+
+- **Dificultad:** Muy fácil  
+- **Objetivo:** Obtener acceso inicial y escalar privilegios
+
+---
+
+## 🔍 Enumeración
+
+Se descomprime el archivo `borazuwarahcft.zip` y se ejecuta la máquina virtual.
+
+Se realiza un escaneo completo de puertos con Nmap:
+
+```bash
+nmap -p- -sC -sV --open -sS -n -Pn <IP>
+```
+
+Parámetros utilizados:
+
+-p-: escaneo de todos los puertos
+-sC: scripts por defecto
+-sV: detección de versiones
+--open: muestra solo puertos abiertos
+-sS: SYN scan (sigiloso)
+-n: evita resolución DNS
+-Pn: omite ping previo
+📌 Resultados
+Puerto 22: SSH
+Puerto 80: HTTP
+
+Al estar el puerto 80 abierto, realizamos una petición curl sobre la dirección IP para inspeccionar el código fuente:
+
+```bash
+curl 172.17.0.2
+``` 
+
+El código HTML revela la existencia de una imagen llamada imagen.jpeg, que luego corroboramos abriendola en el navegador.
+
+Procedemos a descargar la imagen, y utilizamos el comando exiftool para leer los metadatos de la misma.
+
+```bash
+exiftool imagen.jpeg
+```
+
+Observamos que aparece un posible usuario del servicio SSH. Realizamos un ataque de fuerza bruta.
+
+```bash
+hydra -l borazuwarah -P /usr/share/wordlists/SecLists/Passwords/xato-net-10-million-passwords-1000.txt 172.17.0.2 ssh -t 4
+```
+
+Obtenemos contraseña. Ingresamos al servicio SSH, colocamos sudo -l para ver nuestros permisos.
+
+Vemos que aparece (ALL) NOPASSWD: /bin/bash. Esto indica una vulnerabilidad crítica por mala configuración en el archivo /etc/sudoers, permitiendo ejecutar una shell interactiva como el usuario root sin requerir autenticación. Colocamos el comando sudo /bin/bash para abrir la shell privilegiada:
+
+✔️ Se obtuvo acceso root exitosamente, completando el laboratorio.
+
+✅ Conclusión
+
+Se logró:
+
+- Obtención de usuario SSH mediante análisis de metadatos en imagen contenida dentro del servicio web.
+- Obtención de clave mediante ataque de fuerza bruta con hydra.
+- Escalada de privilegios con mala configuración de permisos sudo.

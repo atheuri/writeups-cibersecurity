@@ -140,4 +140,5 @@ Colocamos el comando sugerido en la terminal de la máquina víctima:
 env /bin/sh -p
 ```
 📌 Resultado
+
 ✔️ Se obtuvo una shell con acceso root exitosamente, comprometiendo el sistema y completando el laboratorio por completo.

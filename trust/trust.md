@@ -13,7 +13,7 @@ Se realiza un escaneo completo de puertos con Nmap:
 
 
 nmap -p- -sC -sV --open -sS -n -Pn <IP>
-![Escaneo Nmap](nmap.png)
+![Escaneo Nmap](Images/nmap.png)
 
 Parámetros utilizados:
 -p-: escaneo de todos los puertos
@@ -32,7 +32,7 @@ Al detectar el puerto HTTP abierto, se realiza fuzzing con Gobuster:
 
 gobuster dir -u http://<IP> -w /usr/share/wordlists/dirb/common.txt
 
-![Gobuster](gobuster.png)
+![Gobuster](Images/gobuster.png)
 
 📌 Resultados
 
@@ -48,7 +48,7 @@ Se realiza ataque de fuerza bruta con Hydra:
 
 hydra -l mario -P /usr/share/wordlists/rockyou.txt ssh://<IP>
 
-![Hydra](hydra.png)
+![Hydra](Images/hydra.png)
 
 📌 Resultado
 Usuario: mario
@@ -58,7 +58,7 @@ Acceso vía SSH:
 
 ssh mario@<IP>
 
-![Dentro de SSH](dentrossh.png)
+![Dentro de SSH](Images/dentrossh.png)
 
 🚀 Escalada de Privilegios
 
@@ -66,7 +66,7 @@ Verificación de permisos:
 
 sudo -l
 
-![Sudo permisos](<sudo -l.png>)
+![Sudo permisos](<Images/sudo -l.png>)
 
 Resultado:
 
@@ -77,7 +77,7 @@ Se ejecuta:
 
 sudo vim
 
-![VIM](editortextovim.png)
+![VIM](Images/editortextovim.png)
 
 Dentro de VIM:
 
@@ -85,7 +85,7 @@ Dentro de VIM:
 👑 Verificación
 whoami
 
-![Root](accesoroot.png)
+![Root](Images/accesoroot.png)
 
 Resultado:
 

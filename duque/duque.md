@@ -1,18 +1,20 @@
-🛡️ Write-Up: Myfirsthacking.zip
-Dificultad: Fácil
+# 🛡️ Write-Up: Myfirsthacking.zip
+## Dificultad: Fácil
 
 Objetivo: Obtener acceso inicial y escalar privilegios.
 
 🔍 Enumeración
 Se descomprime el archivo Duque.zip y se ejecuta la máquina virtual.
 
-![DENTRO](Images/ENTRAMOS.PNG)
+![DENTRO](Images/ENTRAMOS.png)
 
 Se realiza un escaneo completo de puertos con Nmap:
 
 ```Bash
 nmap -p- -sC -sV --open -sS -n -Pn <IP>
 ```
+![NMAP](Images/NMAP.png)
+
 Parámetros utilizados:
 
 -p-: escaneo de todos los puertos
@@ -37,18 +39,28 @@ Puerto 80: HTTP
 
 Clásico en máquinas virtuales, puertos abiertos 80 y 22. Luego de revisar la página web en el navegador, encontramos una posible pista en el botón Intranet, sobre el cual nos dice que no tenemos permiso. Por el momento, realizamos un gobuster para ver si localizamos directorios ocultos.
 
-Bash
+´´´Bash
 gobuster dir -u http://172.17.0.2 -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -x php,bak,html,txt
-Al agregar el directorio /bills en el navegador, la página nos da la posibilidad de colocar credenciales de ingreso. Intentamos el famoso código de Inyección SQL para intentar ingresar.
+´´´
+![GOBUSTER](Images/gobustersi.png)
+
+Encontramos algunos directorios interesantes. Al agregar el directorio /bills en el navegador, la página nos da la posibilidad de colocar credenciales de ingreso. Intentamos el famoso código de Inyección SQL para intentar ingresar.
 
 ```Bash
 admin' OR 1=1 -- -
 ```
+![SINPERMISO](Images/notenemospermiso.png)
+
 Logramos ingresar con el usuario Mario, pero no es suficiente, necesitamos una cuenta con mayores privilegios. Lo importante acá, es que descubrimos que la web es vulnerable a la Inyección SQL debido a la forma en que se programa la consulta sql en el backend. Procedemos a realizar extracción de datos mediante sqlmap.
 
 ```Bash
 sqlmap -u "http://172.17.0.2/bills/index.php" --data="username=admin&password=admin" --dbs --batch
 ```
+![SQLMAP](Images/primersqlmap.png)
+![SQLMAP](Images/primersqlmap1.png)
+
+Parámetros utilizados:
+
 -u "http://172.17.0.2/bills/index.php": Especifica la URL del objetivo (Target) donde se encuentra el formulario vulnerable.
 
 --data="username=admin&password=admin": Le indica a la herramienta que el formulario utiliza el método POST para enviar los datos (viajan en el cuerpo de la petición HTTP y no en la URL). Además, le provee la estructura exacta de los parámetros (username y password) y unos valores de prueba genéricos para que sepa dónde empezar a inyectar.
@@ -57,7 +69,7 @@ sqlmap -u "http://172.17.0.2/bills/index.php" --data="username=admin&password=ad
 
 --batch: Automatiza las respuestas de la herramienta. Le dice a sqlmap que elija la opción por defecto cada vez que el programa requiera una interacción del usuario. Esto agiliza el proceso.
 
-Perfecto. Acá obtuvimos las bases de datos disponibles en el servidor:
+Perfecto. Obtuvimos las bases de datos disponibles en el servidor:
 
 information_schema
 
@@ -74,6 +86,9 @@ Antes de romper las tablas, vamos a verificar los privilegios que tiene el usuar
 ```Bash
 sqlmap -u "http://172.17.0.2/bills/index.php" --data="username=admin&password=admin" --is-dba --batch
 ```
+![REVISIONDBA](Images/verificamosdba.png)
+
+Parámetros utilizados:
 
 --is-dba: Proveniente de las iniciales DBA (Database Administrator), envía una consulta específica a la base de datos para interrogarla sobre los privilegios del usuario. En base a la respuesta de la base de datos, podemos saber qué privilegios tiene el usuario.
 
@@ -84,6 +99,10 @@ Volvamos a las bases de datos disponibles. De las cinco, solo register nos inter
 ```Bash
 sqlmap -u "http://172.17.0.2/bills/index.php" --data="username=admin&password=admin" -D register --tables --batch
 ```
+![SQLMAPTABLAS](Images/sqlmaptablas.png)
+
+Parámetros utilizados:
+
 -D register: Le ordena a sqlmap que apunte de forma exclusiva a la base de datos llamada register. Al especificar el objetivo, evitamos que la herramienta pierda tiempo escaneando las bases de datos nativas del sistema.
 
 --tables: Es el parámetro de enumeración que le indica a la herramienta que extraiga la lista completa de tablas contenidas dentro de la base de datos seleccionada.
@@ -93,17 +112,27 @@ Obtenemos la tabla users como resultado. Realizamos volcado de credenciales (Dum
 ```Bash
 sqlmap -u "http://172.17.0.2/bills/index.php" --data="username=admin&password=admin" -D register -T users --dump --batch
 ```
+![SQLMAPDUMP](Images/sqlmapdump.png)
+![SQLMAPDUMP](Images/sqlmapdump2.png)
+
+Parámetros utilizados:
+
 -T users: Le indica a sqlmap la tabla específica de la cual queremos extraer la información (en este caso, la tabla users descubierta en el paso anterior).
 
 --dump: Es la orden definitiva de exfiltración. Le indica a la herramienta que vuelque (dump) y descargue absolutamente todo el contenido (columnas y filas) de la tabla seleccionada en la pantalla de la terminal.
 
 Obtuvimos las credenciales de la tabla. Sabiendo que las cuentas básicas carecen de privilegios en el panel, nos enfocamos en la de administración obtenida: admin / admin123. Ingresamos con esos datos en el formulario y llegamos a un buscador de facturas que requiere un ID.
 
+![FACTURAS](Images/entramosfacturas.png)
+
 Como anteriormente verificamos que el usuario con el que la página se conecta a la base de datos es DBA, utilizaremos el siguiente comando para extraer el archivo que procesa la lógica de esta página:
 
 ```Bash
 sqlmap -u "http://172.17.0.2/bills/index.php" --data="username=admin&password=admin" --file-read "/var/www/html/bills/panel.php" --batch
 ```
+![SQLROBAMOS](Images/robamosarchivos.png)
+![SQLROBAMOS](Images/robamosarchivos2.png)
+
 Tener en cuenta que, en sistemas operativos basados en linux, /var/www/html/ es en donde se alojan por defecto las páginas web, por eso colocamos esa ruta, seguido de /bills/panel.php para obtener los archivos.
 
 Observamos que los archivos se descargaron en la ruta /root/.local/share/sqlmap/output/172.17.0.2/.

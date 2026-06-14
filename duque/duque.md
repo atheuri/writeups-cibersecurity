@@ -6,7 +6,7 @@ Objetivo: Obtener acceso inicial y escalar privilegios.
 🔍 Enumeración
 Se descomprime el archivo Duque.zip y se ejecuta la máquina virtual.
 
-![DENTRO](
+![DENTRO](Images/ENTRAMOS.PNG)
 
 Se realiza un escaneo completo de puertos con Nmap:
 

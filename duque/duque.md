@@ -177,7 +177,7 @@ Colocamos el comando sugerido en la terminal de la máquina víctima:
 ```Bash
 env /bin/sh -p
 ```
-![ROOT](Images/root.png)
+![ROOT](Images/ROOT.png)
 
 📌 Resultado
 

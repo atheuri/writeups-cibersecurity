@@ -142,7 +142,11 @@ Luego de revisar los mismos, encontramos que dentro de la ruta output/172.17.0.2
 ```Bash
 cat _var_www_html_bills_panel.php
 ```
+![IDVULNERABLE](Images/idvulnerable.png)
+
 Divisamos que el ID xyc724 se describe explícitamente en los comentarios del código como vulnerable a IDOR. Lo colocamos en el buscador de Facturas de la web.
+
+![DATOSSSH](Images/conseguimosusuarioyclavessh.png)
 
 Obtenemos el usuario duque junto a su clave de acceso. Datos potencialmente útiles para ingresar al servicio SSH, que recordemos, se encuentra abierto.
 
@@ -150,10 +154,11 @@ Obtenemos el usuario duque junto a su clave de acceso. Datos potencialmente úti
 Perfecto, ingresamos por SSH de forma exitosa. Al colocar sudo -l, nos responde que no tenemos privilegios sudo con este usuario: Sorry, user duque may not run sudo.
 
 Procedemos a colocar el famoso comando find, que permite buscar archivos que tengan el bit SUID activo, los cuales básicamente nos darán permisos de su propietario (root) al ser ejecutados.
-
 ```Bash
 find / -perm -4000 -type f 2>/dev/null
 ```
+![FINDSUID](Images/binariossuid.png)
+
 Desglose Técnico del Comando:
 find /: Invoca la herramienta nativa de Linux para buscar archivos y carpetas, ordenándole que inicie la búsqueda desde el directorio raíz (/), es decir, que recorra absolutamente todo el disco rígido de la máquina.
 
@@ -165,11 +170,15 @@ find /: Invoca la herramienta nativa de Linux para buscar archivos y carpetas, o
 
 De estos binarios reportados, el que nos interesa por ser una desviación de la norma es /usr/bin/env. Procedemos a investigar en la biblia de la escalada de privilegios, la página web GTFOBins, en la cual buscamos cómo vulnerar el binario env explotando su bit SUID.
 
+![GTFOBINS](Images/gtfobins.png)
+
 Colocamos el comando sugerido en la terminal de la máquina víctima:
 
 ```Bash
 env /bin/sh -p
 ```
+![ROOT](Images/root.png)
+
 📌 Resultado
 
 ✔️ Se obtuvo una shell con acceso root exitosamente, comprometiendo el sistema y completando el laboratorio por completo.

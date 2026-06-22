@@ -104,12 +104,19 @@ Este nos dió acceso a todo el entorno global de python. Ahora colocaremos un co
 Desglose:
 
 {{ ... }}: Sintaxis de Jinja2. Todo lo que está dentro se evalúa como código. Es lo que permite la SSTI.
+
 self: Referencia al objeto actual del template.
+
 .__init__: Método constructor del objeto. No lo usamos por sí mismo, sino para seguir navegando.
+
 .__globals__: Muy importante. Nos da acceso a todas las variables globales del entorno Python. 
+
 .__builtins__: Acceso a funciones internas de Python, como print, open, __import__, etc. Clave para importar módulos.
+
 .__import__('os'): Importa el módulo os, el cual sirve para ejecutar comandos e  interactuar con el sistema operativo.
+
 .popen('id'): Ejecuta el comando id y devuelve un ''pipe'' (flujo de salida).
+
 .read(): Lee la salida del comando. 
 
 Basicamente, se explotó una vulnerabilidad SSTI en Jinja2 que permitió acceder al contexto interno del template. A través de la cadena self.__init__.__globals__.__builtins__, se obtuvo acceso a funciones internas de Python, incluyendo __import__, lo que permitió importar el módulo os. Finalmente, se utilizó os.popen() para ejecutar comandos del sistema y obtener su salida, logrando ejecución remota de código (RCE). 
